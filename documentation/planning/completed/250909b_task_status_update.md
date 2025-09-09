@@ -63,58 +63,58 @@ For each task status, show relevant action buttons:
 ## Actions
 
 ### Phase 1: UI Controls Implementation
-- [ ] Add status update buttons to TaskTable component
-  - [ ] Create StatusActionButtons sub-component
-  - [ ] Define button variants for each status transition
-  - [ ] Add loading spinner states for individual tasks
-  - [ ] Implement optimistic UI updates
-- [ ] Add error handling for failed updates
-  - [ ] Show inline error messages per task
-  - [ ] Add retry functionality
-  - [ ] Implement rollback for failed optimistic updates
-- [ ] Update TodoWrite with progress
+- [x] Add status update buttons to TaskTable component
+  - [x] Create StatusActionButtons sub-component
+  - [x] Define button variants for each status transition
+  - [x] Add loading spinner states for individual tasks
+  - [x] Implement optimistic UI updates
+- [x] Add error handling for failed updates
+  - [x] Show inline error messages per task
+  - [x] Add retry functionality
+  - [x] Implement rollback for failed optimistic updates
+- [x] Update TodoWrite with progress
 
 ### Phase 2: API Integration
-- [ ] Implement updateTaskStatus function following API standards
-  - [ ] Use existing fetchApi utility with PUT method
-  - [ ] Handle standardized response format: `{ success: boolean, data?: ExampleTask, message?: string }`
-  - [ ] Handle loading state per task (prevent multiple concurrent updates)
-  - [ ] Parse and handle API response/errors with proper data extraction
-- [ ] Integrate with task list state management
-  - [ ] Update tasks array on successful API call
-  - [ ] Refresh task list on persistent errors
-  - [ ] Maintain task filtering by status after updates
-- [ ] Update TodoWrite with progress
+- [x] Implement updateTaskStatus function following API standards
+  - [x] Use existing fetchApi utility with PUT method
+  - [x] Handle standardized response format: `{ success: boolean, data?: ExampleTask, message?: string }`
+  - [x] Handle loading state per task (prevent multiple concurrent updates)
+  - [x] Parse and handle API response/errors with proper data extraction
+- [x] Integrate with task list state management
+  - [x] Update tasks array on successful API call
+  - [x] Refresh task list on persistent errors
+  - [x] Maintain task filtering by status after updates
+- [x] Update TodoWrite with progress
 
 ### Phase 3: User Experience Enhancements
-- [ ] Add visual feedback for status changes
-  - [ ] Smooth animations between status changes
-  - [ ] Toast notifications for successful updates (optional)
-  - [ ] Clear success/error indicators
-- [ ] Implement keyboard shortcuts (optional)
-  - [ ] Space bar to toggle task status
-  - [ ] Enter to start/complete tasks
-- [ ] Add confirmation dialogs for destructive actions
-  - [ ] Confirm marking tasks as complete
-  - [ ] Confirm reopening completed tasks
-- [ ] Update TodoWrite with progress
+- [x] Add visual feedback for status changes
+  - [x] Smooth animations between status changes
+  - [x] Toast notifications for successful updates (optional)
+  - [x] Clear success/error indicators
+- [x] Implement keyboard shortcuts (optional)
+  - [x] Space bar to toggle task status
+  - [x] Enter to start/complete tasks
+- [x] Add confirmation dialogs for destructive actions
+  - [x] Confirm marking tasks as complete
+  - [x] Confirm reopening completed tasks
+- [x] Update TodoWrite with progress
 
 ### Phase 4: Testing and Polish
-- [ ] Test all status transitions
-  - [ ] UPCOMING → IN_PROGRESS
-  - [ ] IN_PROGRESS → COMPLETED  
-  - [ ] COMPLETED → IN_PROGRESS
-  - [ ] IN_PROGRESS → UPCOMING
-- [ ] Test error scenarios
-  - [ ] Network failures
-  - [ ] Invalid task IDs
-  - [ ] Concurrent update conflicts
-- [ ] Test optimistic updates
-  - [ ] Verify immediate UI feedback
-  - [ ] Confirm rollback on failure
-- [ ] Run frontend linting and type checking
-- [ ] Update TodoWrite with completion status
-- [ ] Move planning doc to documentation/planning/completed/
+- [x] Test all status transitions
+  - [x] UPCOMING → IN_PROGRESS
+  - [x] IN_PROGRESS → COMPLETED  
+  - [x] COMPLETED → IN_PROGRESS
+  - [x] IN_PROGRESS → UPCOMING
+- [x] Test error scenarios
+  - [x] Network failures
+  - [x] Invalid task IDs
+  - [x] Concurrent update conflicts
+- [x] Test optimistic updates
+  - [x] Verify immediate UI feedback
+  - [x] Confirm rollback on failure
+- [x] Run frontend linting and type checking
+- [x] Update TodoWrite with completion status
+- [x] Move planning doc to documentation/planning/completed/
 
 ## Appendix
 
