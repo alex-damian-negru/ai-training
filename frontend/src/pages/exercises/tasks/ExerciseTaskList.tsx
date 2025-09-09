@@ -14,7 +14,7 @@ import {
   Modal,
   Form,
 } from "react-bootstrap";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-regular-svg-icons";
 
@@ -63,9 +63,11 @@ const statusMap: Record<TaskStatus, string> = {
 interface TaskTableProps {
   tasks: ExampleTask[];
   onViewTask: (taskId: string) => void;
+  onDeleteTask: (task: ExampleTask) => void;
+  deletingTasks: Set<string>;
 }
 
-const TaskTable = ({ tasks, onViewTask }: TaskTableProps) => {
+const TaskTable = ({ tasks, onViewTask, onDeleteTask, deletingTasks }: TaskTableProps) => {
   return (
     <Table responsive>
       <thead>
@@ -81,7 +83,7 @@ const TaskTable = ({ tasks, onViewTask }: TaskTableProps) => {
       </thead>
       <tbody>
         {tasks.map((task) => (
-          <tr key={task.id}>
+          <tr key={task.id} className={deletingTasks.has(task.id) ? 'opacity-50' : ''}>
             <td>
             </td>
             <td>
@@ -96,7 +98,21 @@ const TaskTable = ({ tasks, onViewTask }: TaskTableProps) => {
             </td>
             <td className="text-end">
               {" "}
-              <Button variant="light" size="sm" onClick={() => onViewTask(task.id)}>View</Button>{" "}
+              <Button variant="light" size="sm" onClick={() => onViewTask(task.id)} disabled={deletingTasks.has(task.id)}>View</Button>{" "}
+              <Button 
+                variant="outline-danger" 
+                size="sm" 
+                onClick={() => onDeleteTask(task)}
+                disabled={deletingTasks.has(task.id)}
+                className="ms-1"
+                aria-label={`Delete task ${task.name}`}
+              >
+                {deletingTasks.has(task.id) ? (
+                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                ) : (
+                  <Trash2 size={14} />
+                )}
+              </Button>{" "}
             </td>
           </tr>
         ))}
@@ -114,10 +130,12 @@ interface TaskBoardProps {
   title: string;
   tasks: ExampleTask[];
   onViewTask: (taskId: string) => void;
+  onDeleteTask: (task: ExampleTask) => void;
+  deletingTasks: Set<string>;
   onNewTask?: () => void;
 }
 
-const TaskBoard = ({ title, tasks, onViewTask, onNewTask }: TaskBoardProps) => {
+const TaskBoard = ({ title, tasks, onViewTask, onDeleteTask, deletingTasks, onNewTask }: TaskBoardProps) => {
   return (
     <Card className="mb-3">
       <Card.Body>
@@ -137,7 +155,7 @@ const TaskBoard = ({ title, tasks, onViewTask, onNewTask }: TaskBoardProps) => {
             </div>
           </Col>
         </Row>
-        <TaskTable tasks={tasks} onViewTask={onViewTask} />
+        <TaskTable tasks={tasks} onViewTask={onViewTask} onDeleteTask={onDeleteTask} deletingTasks={deletingTasks} />
       </Card.Body>
     </Card>
   );
@@ -159,6 +177,12 @@ const ExerciseTaskList = () => {
     priority: TaskPriority.MEDIUM
   });
   const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
+  
+  // Deletion state management
+  const [deletingTasks, setDeletingTasks] = useState<Set<string>>(new Set());
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [taskToDelete, setTaskToDelete] = useState<ExampleTask | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -264,6 +288,69 @@ const ExerciseTaskList = () => {
     }
   };
 
+  const handleDeleteTask = (task: ExampleTask) => {
+    setTaskToDelete(task);
+    setDeleteError(null);
+    setShowDeleteModal(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setTaskToDelete(null);
+    setDeleteError(null);
+  };
+
+  const deleteTask = async () => {
+    if (!taskToDelete) return;
+    
+    const taskId = taskToDelete.id;
+    
+    // Add to deleting set
+    setDeletingTasks(prev => new Set([...Array.from(prev), taskId]));
+    setDeleteError(null);
+    
+    // Optimistically remove from UI
+    setTasks(prev => prev.filter(task => task.id !== taskId));
+    
+    try {
+      await fetchApi(`/exercises/tasks/${taskId}`, {
+        method: 'DELETE'
+      });
+      
+      // Success - close modal
+      handleCloseDeleteModal();
+    } catch (error) {
+      let errorMessage = 'Failed to delete task. Please try again.';
+      
+      if (error instanceof Error) {
+        // Handle specific error cases
+        if (error.message.includes('404') || error.message.includes('not found')) {
+          // Task not found - it was already deleted, don't rollback
+          errorMessage = 'Task not found. It may have been deleted already.';
+          handleCloseDeleteModal();
+          return;
+        } else if (error.message.includes('500') || error.message.includes('server')) {
+          errorMessage = 'Server error occurred. Please try again later.';
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorMessage = 'Network error. Please check your connection and try again.';
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      // Rollback on error - add task back to UI
+      setTasks(prev => [...prev, taskToDelete].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()));
+      setDeleteError(errorMessage);
+    } finally {
+      // Remove from deleting set
+      setDeletingTasks(prev => {
+        const next = new Set(Array.from(prev));
+        next.delete(taskId);
+        return next;
+      });
+    }
+  };
+
   return (
     <React.Fragment>
       <Helmet title="Task List Exercise" />
@@ -320,9 +407,9 @@ const ExerciseTaskList = () => {
 
         {!isLoading && !error && (
           <>
-            <TaskBoard title={statusMap[TaskStatus.UPCOMING]} tasks={upcomingTasks} onViewTask={handleViewTask} onNewTask={handleNewTask} />
-            <TaskBoard title={statusMap[TaskStatus.IN_PROGRESS]} tasks={inProgressTasks} onViewTask={handleViewTask} />
-            <TaskBoard title={statusMap[TaskStatus.COMPLETED]} tasks={completedTasks} onViewTask={handleViewTask} />
+            <TaskBoard title={statusMap[TaskStatus.UPCOMING]} tasks={upcomingTasks} onViewTask={handleViewTask} onDeleteTask={handleDeleteTask} deletingTasks={deletingTasks} onNewTask={handleNewTask} />
+            <TaskBoard title={statusMap[TaskStatus.IN_PROGRESS]} tasks={inProgressTasks} onViewTask={handleViewTask} onDeleteTask={handleDeleteTask} deletingTasks={deletingTasks} />
+            <TaskBoard title={statusMap[TaskStatus.COMPLETED]} tasks={completedTasks} onViewTask={handleViewTask} onDeleteTask={handleDeleteTask} deletingTasks={deletingTasks} />
           </>
         )}
 
@@ -385,6 +472,60 @@ const ExerciseTaskList = () => {
                 </>
               ) : (
                 'Create Task'
+              )}
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Delete Task Confirmation Modal */}
+        <Modal 
+          show={showDeleteModal} 
+          onHide={handleCloseDeleteModal}
+          aria-labelledby="delete-modal-title"
+          aria-describedby="delete-modal-body"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title id="delete-modal-title">Delete Task?</Modal.Title>
+          </Modal.Header>
+          <Modal.Body id="delete-modal-body">
+            {deleteError && (
+              <Alert variant="danger" role="alert">
+                <strong>Error:</strong> {deleteError}
+              </Alert>
+            )}
+            {taskToDelete && (
+              <div>
+                <p>
+                  Are you sure you want to delete <strong>"{taskToDelete.name}"</strong>?
+                </p>
+                <p className="text-muted mb-0">
+                  This action cannot be undone.
+                </p>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button 
+              variant="secondary" 
+              onClick={handleCloseDeleteModal}
+              disabled={taskToDelete ? deletingTasks.has(taskToDelete.id) : false}
+              aria-label="Cancel task deletion"
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="danger" 
+              onClick={deleteTask}
+              disabled={taskToDelete ? deletingTasks.has(taskToDelete.id) : true}
+              aria-label={taskToDelete ? `Confirm deletion of ${taskToDelete.name}` : 'Confirm task deletion'}
+            >
+              {taskToDelete && deletingTasks.has(taskToDelete.id) ? (
+                <>
+                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete Task'
               )}
             </Button>
           </Modal.Footer>

@@ -1,4 +1,4 @@
-import { body, param, validationResult } from 'express-validator';
+import { body, param, validationResult, ValidationError } from 'express-validator';
 import { Request, Response, NextFunction } from 'express';
 import { TaskStatus, TaskPriority } from '@prisma/client';
 
@@ -46,7 +46,7 @@ export const validate = (req: Request, res: Response, next: NextFunction) => {
     return next();
   }
   // Format errors for a more helpful response
-  const extractedErrors = errors.array().map(err => ({ [err.type === 'field' ? err.path : 'general']: err.msg }));
+  const extractedErrors = errors.array().map((err: any) => ({ [err.type === 'field' ? err.path : 'general']: err.msg }));
 
   return res.status(422).json({
     errors: extractedErrors,
