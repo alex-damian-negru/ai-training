@@ -59,54 +59,54 @@ const [deleteError, setDeleteError] = useState<string | null>(null);
 ## Actions
 
 ### Phase 1: Delete Button and Modal Setup
-- [ ] Add delete button to TaskTable component
-  - [ ] Import Trash icon from lucide-react
-  - [ ] Add delete button next to Edit button
-  - [ ] Style with danger/red variant
-  - [ ] Add onClick handler to show confirmation modal
-- [ ] Create deletion confirmation modal
-  - [ ] Bootstrap Modal with task details
-  - [ ] Show task name being deleted
-  - [ ] Warning about permanent deletion
-  - [ ] Cancel and Delete buttons
-- [ ] Update TodoWrite with progress
+- [x] Add delete button to TaskTable component
+  - [x] Import Trash icon from lucide-react
+  - [x] Add delete button next to Edit button
+  - [x] Style with danger/red variant
+  - [x] Add onClick handler to show confirmation modal
+- [x] Create deletion confirmation modal
+  - [x] Bootstrap Modal with task details
+  - [x] Show task name being deleted
+  - [x] Warning about permanent deletion
+  - [x] Cancel and Delete buttons
+- [x] Update TodoWrite with progress
 
 ### Phase 2: Deletion Logic Implementation
-- [ ] Implement deleteTask function following API standards
-  - [ ] Use fetchApi utility with DELETE method
-  - [ ] Handle standardized response format: `{ success: boolean, data?: any, message?: string }`
-  - [ ] Handle loading states during deletion
-  - [ ] Process success/error responses with proper data extraction
-- [ ] Add optimistic UI updates
-  - [ ] Remove task from state immediately after confirmation
-  - [ ] Show loading spinner in modal during API call
-  - [ ] Rollback if deletion fails
-- [ ] Update TodoWrite with progress
+- [x] Implement deleteTask function following API standards
+  - [x] Use fetchApi utility with DELETE method
+  - [x] Handle standardized response format: `{ success: boolean, data?: any, message?: string }`
+  - [x] Handle loading states during deletion
+  - [x] Process success/error responses with proper data extraction
+- [x] Add optimistic UI updates
+  - [x] Remove task from state immediately after confirmation
+  - [x] Show loading spinner in modal during API call
+  - [x] Rollback if deletion fails
+- [x] Update TodoWrite with progress
 
 ### Phase 3: Error Handling and User Feedback
-- [ ] Handle deletion errors
-  - [ ] Network failures with retry option
-  - [ ] Task not found (404) - show message and remove from UI
-  - [ ] Server errors (500) - show error and keep task
-- [ ] Add user feedback mechanisms
-  - [ ] Success message/toast (optional)
-  - [ ] Clear error messaging in modal
-  - [ ] Proper loading states and disabled buttons
-- [ ] Update TodoWrite with progress
+- [x] Handle deletion errors
+  - [x] Network failures with retry option
+  - [x] Task not found (404) - show message and remove from UI
+  - [x] Server errors (500) - show error and keep task
+- [x] Add user feedback mechanisms
+  - [x] Success message/toast (optional)
+  - [x] Clear error messaging in modal
+  - [x] Proper loading states and disabled buttons
+- [x] Update TodoWrite with progress
 
 ### Phase 4: Accessibility and Polish  
-- [ ] Ensure accessibility compliance
-  - [ ] Proper ARIA labels for delete buttons
-  - [ ] Screen reader announcements for deletions
-  - [ ] Keyboard navigation support
-  - [ ] Focus management in modals
-- [ ] Test edge cases
-  - [ ] Multiple rapid deletion attempts
-  - [ ] Deletion while task list is loading
-  - [ ] Modal behavior on ESC/backdrop click
-- [ ] Run frontend linting and type checking
-- [ ] Update TodoWrite with completion status
-- [ ] Move planning doc to documentation/planning/completed/
+- [x] Ensure accessibility compliance
+  - [x] Proper ARIA labels for delete buttons
+  - [x] Screen reader announcements for deletions
+  - [x] Keyboard navigation support
+  - [x] Focus management in modals
+- [x] Test edge cases
+  - [x] Multiple rapid deletion attempts
+  - [x] Deletion while task list is loading
+  - [x] Modal behavior on ESC/backdrop click
+- [x] Run frontend linting and type checking
+- [x] Update TodoWrite with completion status
+- [x] Move planning doc to documentation/planning/completed/
 
 ## User Experience Planning
 
@@ -134,50 +134,50 @@ This action cannot be undone.
 ## Actions
 
 ### Phase 1: Basic Delete Functionality
-- [ ] Add delete button to each task row
-  - [ ] Position next to existing Edit button  
-  - [ ] Use Trash icon with red/danger styling
-  - [ ] Add proper accessibility labels
-- [ ] Create confirmation modal component
-  - [ ] Display task name and deletion warning
-  - [ ] Implement modal state management
-  - [ ] Handle cancel and confirm actions
-- [ ] Update TodoWrite with progress
+- [x] Add delete button to each task row
+  - [x] Position next to existing Edit button  
+  - [x] Use Trash icon with red/danger styling
+  - [x] Add proper accessibility labels
+- [x] Create confirmation modal component
+  - [x] Display task name and deletion warning
+  - [x] Implement modal state management
+  - [x] Handle cancel and confirm actions
+- [x] Update TodoWrite with progress
 
 ### Phase 2: API Integration
-- [ ] Implement deleteTask API function
-  - [ ] Use existing fetchApi utility
-  - [ ] Handle DELETE request to /api/exercises/tasks/:id
-  - [ ] Process response and error states
-- [ ] Integrate deletion with task list
-  - [ ] Remove task from state on successful deletion
-  - [ ] Update filtered task lists (upcoming/in-progress/completed)
-  - [ ] Handle concurrent operations gracefully
-- [ ] Update TodoWrite with progress
+- [x] Implement deleteTask API function
+  - [x] Use existing fetchApi utility
+  - [x] Handle DELETE request to /api/exercises/tasks/:id
+  - [x] Process response and error states
+- [x] Integrate deletion with task list
+  - [x] Remove task from state on successful deletion
+  - [x] Update filtered task lists (upcoming/in-progress/completed)
+  - [x] Handle concurrent operations gracefully
+- [x] Update TodoWrite with progress
 
 ### Phase 3: Error Handling and UX
-- [ ] Implement comprehensive error handling
-  - [ ] Show specific error messages in modal
-  - [ ] Handle network failures with retry option
-  - [ ] Manage 404 errors (task already deleted)
-- [ ] Add loading and feedback states
-  - [ ] Disable interface during deletion
-  - [ ] Show success feedback (optional)
-  - [ ] Implement optimistic updates with rollback
-- [ ] Update TodoWrite with progress
+- [x] Implement comprehensive error handling
+  - [x] Show specific error messages in modal
+  - [x] Handle network failures with retry option
+  - [x] Manage 404 errors (task already deleted)
+- [x] Add loading and feedback states
+  - [x] Disable interface during deletion
+  - [x] Show success feedback (optional)
+  - [x] Implement optimistic updates with rollback
+- [x] Update TodoWrite with progress
 
 ### Phase 4: Testing and Polish
-- [ ] Test deletion functionality thoroughly  
-  - [ ] Verify modal behavior and confirmation flow
-  - [ ] Test error scenarios and recovery
-  - [ ] Check concurrent deletion handling
-- [ ] Ensure accessibility compliance
-  - [ ] Keyboard navigation and focus management
-  - [ ] Screen reader compatibility
-  - [ ] ARIA labels and descriptions
-- [ ] Run frontend linting and type checking
-- [ ] Update TodoWrite with completion status
-- [ ] Move planning doc to documentation/planning/completed/
+- [x] Test deletion functionality thoroughly  
+  - [x] Verify modal behavior and confirmation flow
+  - [x] Test error scenarios and recovery
+  - [x] Check concurrent deletion handling
+- [x] Ensure accessibility compliance
+  - [x] Keyboard navigation and focus management
+  - [x] Screen reader compatibility
+  - [x] ARIA labels and descriptions
+- [x] Run frontend linting and type checking
+- [x] Update TodoWrite with completion status
+- [x] Move planning doc to documentation/planning/completed/
 
 ## Appendix
 
