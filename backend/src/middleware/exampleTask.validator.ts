@@ -1,4 +1,4 @@
-import { body, param, validationResult, ValidationError } from 'express-validator';
+const { body, param, validationResult } = require('express-validator');
 import { Request, Response, NextFunction } from 'express';
 import { TaskStatus, TaskPriority } from '@prisma/client';
 
