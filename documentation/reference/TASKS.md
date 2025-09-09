@@ -5,6 +5,10 @@ Task management functionality that provides CRUD operations for tasks with statu
 ## See Also
 
 - `docs/plans/01-Task-Example-API.md` - implementation planning and decisions for the task API
+- `documentation/planning/completed/250909a_connect_new_task_button.md` - task creation implementation
+- `documentation/planning/completed/250909b_task_status_update.md` - status update functionality implementation  
+- `documentation/planning/completed/250909c_task_deletion.md` - task deletion functionality implementation
+- `documentation/planning/completed/250909d_task_editing.md` - task editing functionality implementation
 - `docs/processes/API_DEVELOPMENT_STANDARDS.md` - API development standards that use this task system as a reference implementation
 - `docs/QUICKSTART.md` - project setup guide including database migration steps for task system
 - `README.md` - main project overview highlighting the task management example
@@ -93,6 +97,28 @@ model ExampleTask {
 }
 ```
 
+### Standardized Response Format ✓
+
+All write operations (POST, PUT, DELETE) return consistent response format:
+
+**Success Response (200/201)**
+```json
+{
+  "success": true,
+  "data": { /* Task object for POST/PUT */ },
+  "message": "Task created successfully"
+}
+```
+
+**Error Response (4xx/5xx)**
+```json
+{
+  "success": false,
+  "message": "Validation error message",
+  "errors": { /* Field-specific errors if applicable */ }
+}
+```
+
 ### Layer Architecture ✓
 
 1. **Routes** (`exerciseTask.routes.ts`): URL routing and middleware composition
@@ -118,7 +144,10 @@ model ExampleTask {
 - Three-column layout (Upcoming, In Progress, Completed)
 - Task filtering by status
 - Loading states and error handling
-- View button navigation to task details
+- **New Task creation** via modal form with validation
+- **Status update buttons** (Start Task, Mark Complete) with optimistic updates
+- **Delete functionality** with confirmation modal and error handling
+- **Edit button** for inline task editing with form validation
 
 **Navigation**: `/exercises/tasks/list`
 
@@ -135,6 +164,8 @@ model ExampleTask {
 
 **Navigation**: `/exercises/tasks/:taskId`
 
+**Note**: The View button in task lists now opens an inline edit modal instead of navigating to this detail page, making this component primarily accessible via direct URL navigation.
+
 ### TasksList (Demo) ✓
 
 **Location**: `frontend/src/pages/apps/TasksList.tsx`
@@ -146,6 +177,80 @@ model ExampleTask {
 - Avatar and assignment information display
 
 **Navigation**: `/tasks/list`
+
+## UI Interaction Patterns
+
+### Task Creation Flow
+
+**New Task Button** → **Modal Form** → **API Call** → **List Refresh**
+
+```typescript
+// Modal state management
+const [showNewTaskModal, setShowNewTaskModal] = useState<boolean>(false);
+const [formData, setFormData] = useState<TaskFormData>({ name: '', priority: TaskPriority.MEDIUM });
+
+// Form submission with validation
+const handleCreateTask = async (formData: TaskFormData) => {
+  const response = await fetchApi<ExampleTask>('/exercises/tasks', {
+    method: 'POST',
+    body: JSON.stringify(payload)
+  });
+  // Refresh task list on success
+};
+```
+
+### Task Status Updates
+
+**Action Button** → **Optimistic Update** → **API Call** → **Rollback on Error**
+
+```typescript
+// Status transition buttons
+const getStatusActions = (status: TaskStatus) => {
+  switch (status) {
+    case TaskStatus.UPCOMING:
+      return [{ label: 'Start Task', newStatus: TaskStatus.IN_PROGRESS }];
+    case TaskStatus.IN_PROGRESS:
+      return [{ label: 'Mark Complete', newStatus: TaskStatus.COMPLETED }];
+    case TaskStatus.COMPLETED:
+      return [{ label: 'Reopen', newStatus: TaskStatus.UPCOMING }];
+  }
+};
+
+// Optimistic updates with rollback
+const updateTaskStatus = async (taskId: string, newStatus: TaskStatus) => {
+  const originalTasks = tasks;
+  setTasks(prev => prev.map(task => 
+    task.id === taskId ? { ...task, status: newStatus } : task
+  ));
+  
+  try {
+    await fetchApi(`/exercises/tasks/${taskId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ status: newStatus })
+    });
+  } catch (error) {
+    setTasks(originalTasks); // Rollback on failure
+  }
+};
+```
+
+### Task Deletion Flow
+
+**Delete Button** → **Confirmation Modal** → **Optimistic Update** → **API Call** → **Rollback on Error**
+
+```typescript
+const deleteTask = async (task: ExampleTask) => {
+  // Remove from UI immediately
+  const originalTasks = tasks;
+  setTasks(prev => prev.filter(t => t.id !== task.id));
+  
+  try {
+    await fetchApi(`/exercises/tasks/${task.id}`, { method: 'DELETE' });
+  } catch (error) {
+    setTasks(originalTasks); // Restore on failure
+  }
+};
+```
 
 ## Common Patterns
 
@@ -214,6 +319,12 @@ const priorityVariantMap: Record<TaskPriority, string> = {
 - [x] Status and priority management
 - [x] Input validation and error handling
 - [x] Responsive UI components
+- [x] **Task creation** via "New Task" button with modal form
+- [x] **Task editing** with inline form (replaces view-only detail page)
+- [x] **Task deletion** with confirmation modal and optimistic updates
+- [x] **Status updates** via action buttons (Start Task, Mark Complete, etc.)
+- [x] **Optimistic UI updates** with rollback on API failures
+- [x] **Standardized API response handling** for all operations
 
 ### Planned Enhancements 📋
 
@@ -231,7 +342,7 @@ const priorityVariantMap: Record<TaskPriority, string> = {
 2. **No User Context**: Assignment fields exist but aren't integrated
 3. **Limited Filtering**: Only status-based filtering implemented
 4. **No Pagination**: All tasks loaded at once
-5. **No Real-time Updates**: Manual refresh required for changes
+5. **No Real-time Updates**: Changes require manual page refresh (optimistic updates provide immediate UI feedback)
 
 ## Development Workflow
 
@@ -273,6 +384,11 @@ curl -X POST http://localhost:5001/api/exercises/tasks \
 - Review required fields (name for creation)
 - Check enum values match exactly (case-sensitive)
 - Verify UUID format for ID parameters
+
+**"Failed to update task status" or "Failed to delete task"**
+- ✅ **RESOLVED**: Backend now returns standardized `{ success, data?, message }` format
+- These errors occurred when frontend expected standardized responses but backend returned raw data
+- Fixed in controller methods to ensure consistent API response format
 
 **Database connection issues**
 - Check `DATABASE_URL` in backend `.env`
