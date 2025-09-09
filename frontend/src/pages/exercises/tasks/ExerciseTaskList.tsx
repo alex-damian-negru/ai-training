@@ -11,6 +11,8 @@ import {
   Card,
   Spinner,
   Alert,
+  Modal,
+  Form,
 } from "react-bootstrap";
 import { Plus } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -37,7 +39,9 @@ enum TaskPriority {
 interface ExampleTask {
   id: string;
   name: string;
-  description: string | null;
+  assignedToName: string | null;
+  assignedToAvatar: string | null;
+  dueDate: string | null;
   status: TaskStatus;
   priority: TaskPriority;
   createdAt: string; // Dates will be strings from JSON
@@ -69,7 +73,7 @@ const TaskTable = ({ tasks, onViewTask }: TaskTableProps) => {
           <th className="align-middle w-25px">
           </th>
           <th className="align-middle w-50">Name</th>
-          <th className="align-middle d-none d-xl-table-cell">Description</th>
+          <th className="align-middle d-none d-xl-table-cell">Assigned To</th>
           <th className="align-middle d-none d-xxl-table-cell">Created</th>
           <th className="align-middle">Priority</th>
           <th className="align-middle text-end">Actions</th>
@@ -83,7 +87,7 @@ const TaskTable = ({ tasks, onViewTask }: TaskTableProps) => {
             <td>
               <strong>{task.name}</strong>
             </td>
-            <td className="d-none d-xl-table-cell">{task.description || '-'}</td>
+            <td className="d-none d-xl-table-cell">{task.assignedToName || '-'}</td>
             <td className="d-none d-xxl-table-cell">{new Date(task.createdAt).toLocaleDateString()}</td>
             <td>
               <Badge bg="" className={`badge-subtle-${priorityVariantMap[task.priority]}`}>
@@ -110,9 +114,10 @@ interface TaskBoardProps {
   title: string;
   tasks: ExampleTask[];
   onViewTask: (taskId: string) => void;
+  onNewTask?: () => void;
 }
 
-const TaskBoard = ({ title, tasks, onViewTask }: TaskBoardProps) => {
+const TaskBoard = ({ title, tasks, onViewTask, onNewTask }: TaskBoardProps) => {
   return (
     <Card className="mb-3">
       <Card.Body>
@@ -125,6 +130,7 @@ const TaskBoard = ({ title, tasks, onViewTask }: TaskBoardProps) => {
               <Button
                 variant="primary"
                 size="sm"
+                onClick={onNewTask}
               >
                 <Plus size={18} /> New Task
               </Button>
@@ -143,6 +149,16 @@ const ExerciseTaskList = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showIntroAlert, setShowIntroAlert] = useState<boolean>(true);
+  
+  // Modal state management
+  const [showCreateModal, setShowCreateModal] = useState<boolean>(false);
+  const [isCreating, setIsCreating] = useState<boolean>(false);
+  const [createError, setCreateError] = useState<string | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    priority: TaskPriority.MEDIUM
+  });
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({});
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -168,6 +184,84 @@ const ExerciseTaskList = () => {
 
   const handleViewTask = (taskId: string) => {
     navigate(`/exercises/tasks/${taskId}`);
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      priority: TaskPriority.MEDIUM
+    });
+    setValidationErrors({});
+    setCreateError(null);
+  };
+
+  const handleNewTask = () => {
+    resetForm();
+    setShowCreateModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowCreateModal(false);
+    resetForm();
+  };
+
+  const validateForm = () => {
+    const errors: {[key: string]: string} = {};
+    
+    if (!formData.name.trim()) {
+      errors.name = 'Task name is required';
+    }
+    
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleInputChange = (field: keyof typeof formData, value: string | TaskPriority) => {
+    const trimmedValue = typeof value === 'string' ? value.trim() : value;
+    setFormData(prev => ({ ...prev, [field]: trimmedValue }));
+    // Clear errors when user starts typing
+    if (createError) {
+      setCreateError(null);
+    }
+    if (validationErrors[field]) {
+      setValidationErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const createTask = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsCreating(true);
+    setCreateError(null);
+
+    try {
+      const payload = {
+        name: formData.name.trim(),
+        priority: formData.priority
+      };
+
+      const response = await fetchApi<ExampleTask>('/exercises/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response) {
+        // Add the new task to the current tasks list
+        setTasks(prev => [...prev, response]);
+        handleCloseModal();
+      } else {
+        setCreateError('Failed to create task');
+      }
+    } catch (error) {
+      setCreateError(error instanceof Error ? error.message : 'Failed to create task');
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   return (
@@ -226,11 +320,75 @@ const ExerciseTaskList = () => {
 
         {!isLoading && !error && (
           <>
-            <TaskBoard title={statusMap[TaskStatus.UPCOMING]} tasks={upcomingTasks} onViewTask={handleViewTask} />
+            <TaskBoard title={statusMap[TaskStatus.UPCOMING]} tasks={upcomingTasks} onViewTask={handleViewTask} onNewTask={handleNewTask} />
             <TaskBoard title={statusMap[TaskStatus.IN_PROGRESS]} tasks={inProgressTasks} onViewTask={handleViewTask} />
             <TaskBoard title={statusMap[TaskStatus.COMPLETED]} tasks={completedTasks} onViewTask={handleViewTask} />
           </>
         )}
+
+        {/* Create Task Modal */}
+        <Modal show={showCreateModal} onHide={handleCloseModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Create New Task</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {createError && (
+              <Alert variant="danger">
+                <strong>Error:</strong> {createError}
+              </Alert>
+            )}
+            <Form>
+              <Form.Group className="mb-3">
+                <Form.Label>Task Name *</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Enter task name"
+                  value={formData.name}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  isInvalid={!!validationErrors.name}
+                  required
+                />
+                <Form.Control.Feedback type="invalid">
+                  {validationErrors.name}
+                </Form.Control.Feedback>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Priority</Form.Label>
+                <Form.Select
+                  value={formData.priority}
+                  onChange={(e) => handleInputChange('priority', e.target.value as TaskPriority)}
+                >
+                  <option value={TaskPriority.LOW}>Low</option>
+                  <option value={TaskPriority.MEDIUM}>Medium</option>
+                  <option value={TaskPriority.HIGH}>High</option>
+                </Form.Select>
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button 
+              variant="secondary" 
+              onClick={handleCloseModal}
+              disabled={isCreating}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="primary" 
+              onClick={createTask}
+              disabled={isCreating || !formData.name.trim()}
+            >
+              {isCreating ? (
+                <>
+                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                  Creating...
+                </>
+              ) : (
+                'Create Task'
+              )}
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </Container>
     </React.Fragment>
   );

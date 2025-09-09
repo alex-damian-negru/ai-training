@@ -64,57 +64,57 @@ const [formData, setFormData] = useState({
 ## Actions
 
 ### Phase 1: Modal Infrastructure
-- [ ] Add modal state management to ExerciseTaskList component
-  - [ ] Import Modal, Form components from react-bootstrap
-  - [ ] Add state variables for modal visibility and form data
-  - [ ] Add onClick handler to New Task button to show modal
-- [ ] Create basic modal structure with form fields
-  - [ ] Name input field (required)
-  - [ ] Description textarea (optional)
-  - [ ] Priority select dropdown with enum values
-  - [ ] Cancel and Create buttons in modal footer
-- [ ] Update TodoWrite with progress and move to current phase
+- [x] Add modal state management to ExerciseTaskList component
+  - [x] Import Modal, Form components from react-bootstrap
+  - [x] Add state variables for modal visibility and form data
+  - [x] Add onClick handler to New Task button to show modal
+- [x] Create basic modal structure with form fields
+  - [x] Name input field (required)
+  - [x] Description textarea (optional)
+  - [x] Priority select dropdown with enum values
+  - [x] Cancel and Create buttons in modal footer
+- [x] Update TodoWrite with progress and move to current phase
 
 ### Phase 2: Form Handling and Validation
-- [ ] Implement form data management
-  - [ ] Add handleInputChange function for controlled inputs
-  - [ ] Add form validation (name required, trim whitespace)
-  - [ ] Show validation errors in form
-- [ ] Add form reset functionality
-  - [ ] Clear form when modal closes
-  - [ ] Reset validation errors on new form open
-- [ ] Update TodoWrite with progress
+- [x] Implement form data management
+  - [x] Add handleInputChange function for controlled inputs
+  - [x] Add form validation (name required, trim whitespace)
+  - [x] Show validation errors in form
+- [x] Add form reset functionality
+  - [x] Clear form when modal closes
+  - [x] Reset validation errors on new form open
+- [x] Update TodoWrite with progress
 
 ### Phase 3: API Integration
-- [ ] Implement task creation API call following API standards
-  - [ ] Add createTask function using fetchApi utility
-  - [ ] Handle standardized response format: `{ success: boolean, data?: ExampleTask, message?: string }`
-  - [ ] Handle loading states during API call
-  - [ ] Handle success response (201 status) with data extraction from `response.data`
-  - [ ] Handle validation errors (422 status) with message from `response.error/message`
-  - [ ] Handle server errors (500 status)
-- [ ] Integrate creation with existing task list
-  - [ ] Refresh task list after successful creation
-  - [ ] Close modal on success
-  - [ ] Show success feedback using `response.message` if available
-- [ ] Update TodoWrite with progress
+- [x] Implement task creation API call following API standards
+  - [x] Add createTask function using fetchApi utility
+  - [x] Handle standardized response format: `{ success: boolean, data?: ExampleTask, message?: string }`
+  - [x] Handle loading states during API call
+  - [x] Handle success response (201 status) with data extraction from `response.data`
+  - [x] Handle validation errors (422 status) with message from `response.error/message`
+  - [x] Handle server errors (500 status)
+- [x] Integrate creation with existing task list
+  - [x] Refresh task list after successful creation
+  - [x] Close modal on success
+  - [x] Show success feedback using `response.message` if available
+- [x] Update TodoWrite with progress
 
 ### Phase 4: Testing and Polish
-- [ ] Test form validation
-  - [ ] Verify required field validation
-  - [ ] Test with various input combinations
-  - [ ] Verify error message display
-- [ ] Test API integration
-  - [ ] Verify successful task creation
-  - [ ] Test error handling scenarios
-  - [ ] Confirm task list refresh works
-- [ ] Polish user experience
-  - [ ] Ensure proper loading states
-  - [ ] Verify modal behavior (ESC key, backdrop click)
-  - [ ] Check responsive design on mobile
-- [ ] Run frontend linting and type checking
-- [ ] Update TodoWrite with completion status
-- [ ] Move planning doc to documentation/planning/completed/
+- [x] Test form validation
+  - [x] Verify required field validation
+  - [x] Test with various input combinations
+  - [x] Verify error message display
+- [x] Test API integration
+  - [x] Verify successful task creation
+  - [x] Test error handling scenarios
+  - [x] Confirm task list refresh works
+- [x] Polish user experience
+  - [x] Ensure proper loading states
+  - [x] Verify modal behavior (ESC key, backdrop click)
+  - [x] Check responsive design on mobile
+- [x] Run frontend linting and type checking
+- [x] Update TodoWrite with completion status
+- [x] Move planning doc to documentation/planning/completed/
 
 ## Appendix
 
