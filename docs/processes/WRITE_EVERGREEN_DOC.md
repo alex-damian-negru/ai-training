@@ -36,6 +36,7 @@ Examples of good cross-references:
 - `documentation/processes/WRITE_PLANNING_DOC.md` - for information about writing ephemeral decision/planning docs
 - `components/blah.tsx` - implementation of blah features described here
 - `documentation/planning/250526a_blah_detailed_planning.md` - historical decision context on the project to build that feature
+- `documentation/reference/TASKS.md` - complete example of evergreen documentation covering a full-stack feature
 
 - External URLs when relevant (e.g., library documentation)
 

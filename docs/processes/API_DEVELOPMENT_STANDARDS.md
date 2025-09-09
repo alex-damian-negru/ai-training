@@ -174,6 +174,7 @@ Refer to existing implementations:
 - **POST endpoints**: `/api/audits` (create)
 - **PUT endpoints**: `/api/audits/:id` (update)
 - **DELETE endpoints**: Follow pattern in external access management
+- **Task Management Example**: `/api/exercises/tasks` endpoints provide a complete CRUD implementation reference (see `documentation/reference/TASKS.md`)
 
 ### Security-Critical Endpoints
 Reference external portal endpoints for:
@@ -209,6 +210,7 @@ For updating existing endpoints without validation:
 
 ## See Also
 
+- `documentation/reference/TASKS.md` - complete example of API standards implementation including CRUD operations, validation, and type safety
 - `/documentation/reference/API_ENDPOINT_MIGRATION_GUIDE.md` - Detailed migration procedures
 - `/documentation/reference/TYPE_SAFETY_IMPLEMENTATION_SUMMARY.md` - Project overview and achievements
 - `/documentation/planning/future/API_VALIDATION_ROADMAP.md` - Roadmap for remaining endpoints
