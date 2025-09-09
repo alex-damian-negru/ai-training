@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Button,
@@ -57,9 +58,10 @@ const statusMap: Record<TaskStatus, string> = {
 
 interface TaskTableProps {
   tasks: ExampleTask[];
+  onViewTask: (taskId: string) => void;
 }
 
-const TaskTable = ({ tasks }: TaskTableProps) => {
+const TaskTable = ({ tasks, onViewTask }: TaskTableProps) => {
   return (
     <Table responsive>
       <thead>
@@ -90,7 +92,7 @@ const TaskTable = ({ tasks }: TaskTableProps) => {
             </td>
             <td className="text-end">
               {" "}
-              <Button variant="light" size="sm">View</Button>{" "}
+              <Button variant="light" size="sm" onClick={() => onViewTask(task.id)}>View</Button>{" "}
             </td>
           </tr>
         ))}
@@ -107,9 +109,10 @@ const TaskTable = ({ tasks }: TaskTableProps) => {
 interface TaskBoardProps {
   title: string;
   tasks: ExampleTask[];
+  onViewTask: (taskId: string) => void;
 }
 
-const TaskBoard = ({ title, tasks }: TaskBoardProps) => {
+const TaskBoard = ({ title, tasks, onViewTask }: TaskBoardProps) => {
   return (
     <Card className="mb-3">
       <Card.Body>
@@ -128,13 +131,14 @@ const TaskBoard = ({ title, tasks }: TaskBoardProps) => {
             </div>
           </Col>
         </Row>
-        <TaskTable tasks={tasks} />
+        <TaskTable tasks={tasks} onViewTask={onViewTask} />
       </Card.Body>
     </Card>
   );
 };
 
 const ExerciseTaskList = () => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<ExampleTask[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -161,6 +165,10 @@ const ExerciseTaskList = () => {
   const upcomingTasks = tasks.filter((task) => task.status === TaskStatus.UPCOMING);
   const inProgressTasks = tasks.filter((task) => task.status === TaskStatus.IN_PROGRESS);
   const completedTasks = tasks.filter((task) => task.status === TaskStatus.COMPLETED);
+
+  const handleViewTask = (taskId: string) => {
+    navigate(`/exercises/tasks/${taskId}`);
+  };
 
   return (
     <React.Fragment>
@@ -218,9 +226,9 @@ const ExerciseTaskList = () => {
 
         {!isLoading && !error && (
           <>
-            <TaskBoard title={statusMap[TaskStatus.UPCOMING]} tasks={upcomingTasks} />
-            <TaskBoard title={statusMap[TaskStatus.IN_PROGRESS]} tasks={inProgressTasks} />
-            <TaskBoard title={statusMap[TaskStatus.COMPLETED]} tasks={completedTasks} />
+            <TaskBoard title={statusMap[TaskStatus.UPCOMING]} tasks={upcomingTasks} onViewTask={handleViewTask} />
+            <TaskBoard title={statusMap[TaskStatus.IN_PROGRESS]} tasks={inProgressTasks} onViewTask={handleViewTask} />
+            <TaskBoard title={statusMap[TaskStatus.COMPLETED]} tasks={completedTasks} onViewTask={handleViewTask} />
           </>
         )}
       </Container>

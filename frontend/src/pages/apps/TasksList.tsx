@@ -8,6 +8,7 @@ import {
   Row,
   Col,
   Card,
+  Alert,
 } from "react-bootstrap";
 
 import avatar2 from "../../assets/img/avatars/avatar-2.jpg";
@@ -174,7 +175,12 @@ const TaskTable = ({ tasks }: TaskTableProps) => {
             </td>
             <td className="text-end">
               {" "}
-              <Button variant="light">View</Button>{" "}
+              <Button 
+                variant="light" 
+                onClick={() => alert(`View task: ${task.name}\n\nThis is a demo task component. For functional task viewing, please use the Exercise Task List under Exercises > Task List.`)}
+              >
+                View
+              </Button>{" "}
             </td>
           </tr>
         ))}
