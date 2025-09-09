@@ -30,9 +30,6 @@ const NavigationIndex = lazy(() => import("./pages/app/NavigationIndex"));
 const ExerciseTaskList = lazy(
   () => import("./pages/exercises/tasks/ExerciseTaskList")
 );
-const ExerciseTaskDetail = lazy(
-  () => import("./pages/exercises/tasks/ExerciseTaskDetail")
-);
 const LlmQueryExercise = lazy(
   () => import("./pages/exercises/llm-query/LlmQuery")
 );
@@ -167,10 +164,6 @@ const routes = [
           {
             path: "list",
             element: <ExerciseTaskList />,
-          },
-          {
-            path: ":taskId",
-            element: <ExerciseTaskDetail />,
           },
         ],
       },
