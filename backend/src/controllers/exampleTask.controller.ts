@@ -89,7 +89,11 @@ export const handleUpdateTask = async (
     
     // TaskService.updateTask now returns null if not found (or we can catch Prisma P2025)
     // Let's rely on Prisma error for now, can adjust later if needed
-    res.json(updatedTask);
+    res.json({
+      success: true,
+      data: updatedTask,
+      message: 'Task updated successfully'
+    });
 
   } catch (error) {
      // Handle Prisma's specific error for record not found during update/delete
@@ -112,7 +116,10 @@ export const handleDeleteTask = async (
     const { id } = req.params;
     await TaskService.deleteTask(id);
     // TaskService.deleteTask returns the deleted task or throws P2025 if not found
-    res.status(204).send(); // Send No Content on successful deletion
+    res.json({
+      success: true,
+      message: 'Task deleted successfully'
+    });
   } catch (error) {
      // Handle Prisma's specific error for record not found during update/delete
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
