@@ -61,7 +61,7 @@ const [deleteError, setDeleteError] = useState<string | null>(null);
 ### Phase 1: Delete Button and Modal Setup
 - [ ] Add delete button to TaskTable component
   - [ ] Import Trash icon from lucide-react
-  - [ ] Add delete button next to View button
+  - [ ] Add delete button next to Edit button
   - [ ] Style with danger/red variant
   - [ ] Add onClick handler to show confirmation modal
 - [ ] Create deletion confirmation modal
@@ -135,7 +135,7 @@ This action cannot be undone.
 
 ### Phase 1: Basic Delete Functionality
 - [ ] Add delete button to each task row
-  - [ ] Position next to existing View button  
+  - [ ] Position next to existing Edit button  
   - [ ] Use Trash icon with red/danger styling
   - [ ] Add proper accessibility labels
 - [ ] Create confirmation modal component
