@@ -2,6 +2,10 @@
 
 This document outlines the phases and steps involved in creating the Task Management example application, including both frontend UI setup and backend API development.
 
+## See Also
+
+- `documentation/reference/TASKS.md` - comprehensive documentation of the implemented task management system including database schema, API endpoints, and frontend components
+
 ## Phase 1: Frontend Setup (Replicating Task List UI)
 
 - [x] Analyze original `TasksList` component (`frontend/src/pages/apps/TasksList.tsx`)

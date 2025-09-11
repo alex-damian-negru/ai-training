@@ -20,4 +20,15 @@ This backend is a Node.js/Express application using TypeScript and Prisma with a
 -   **Development:** Run `npm run dev` from the *root* directory. This uses `concurrently` to start both backend (with `nodemon`) and frontend dev servers.
 -   **Production:**
     1.  Build the backend: `npm run build -w backend`
-    2.  Start the backend: `npm run start -w backend` 
+    2.  Start the backend: `npm run start -w backend`
+
+## Example API Implementation
+
+The backend includes a complete task management API demonstrating best practices:
+
+- RESTful endpoints at `/api/exercises/tasks`
+- Full CRUD operations with validation and error handling
+- Prisma-based data modeling and repository patterns
+- TypeScript integration with type-safe database operations
+
+See `documentation/reference/TASKS.md` for complete API documentation including database schema, endpoint specifications, and implementation patterns. 

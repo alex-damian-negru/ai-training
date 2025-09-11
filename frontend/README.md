@@ -31,3 +31,14 @@ See the section about [building for production](https://vitejs.dev/guide/build.h
 You can learn more in the [Vite documentation](https://vitejs.dev/).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Example Components
+
+This frontend includes a complete task management interface demonstrating modern React patterns:
+
+- Task list component with API integration (`/exercises/tasks/list`)
+- Individual task detail views with navigation
+- Loading states, error handling, and responsive design
+- Status-based filtering and priority badges
+
+See `documentation/reference/TASKS.md` for complete component documentation including props, API integration patterns, and navigation structure.

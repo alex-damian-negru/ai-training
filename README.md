@@ -29,4 +29,15 @@ This project is a monorepo containing a backend and frontend application, set up
     ```
     This command will launch both servers concurrently. The backend will typically run on `http://localhost:5001` and the frontend on `http://localhost:5000` (or the next available ports, as configured).
 
-You should now be able to access the frontend application in your browser and interact with the backend API. 
+You should now be able to access the frontend application in your browser and interact with the backend API.
+
+## Example Features
+
+This project includes a complete task management system demonstrating full-stack development patterns:
+
+- **Task Management**: Create, read, update, and delete tasks with status and priority tracking
+- **API Endpoints**: RESTful API at `/api/exercises/tasks` with comprehensive validation
+- **Frontend Components**: Task list and detail views with real-time API integration
+- **Database Integration**: Prisma-based data modeling with migrations and seeding
+
+See `documentation/reference/TASKS.md` for complete system documentation including database schema, API endpoints, and frontend component architecture. 
